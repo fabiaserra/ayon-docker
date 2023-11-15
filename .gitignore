@@ -8,3 +8,5 @@ storage/
 
 # JetBrains IDE data
 .idea
+/k8s/ayon/.env
+/k8s/ayon/.secrets.yaml

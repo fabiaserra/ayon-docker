@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "ayon.fullname" . }}-pgbackup
+  labels:
+    {{- include "ayon.labels" . | nindent 4 }}
+    app.kubernetes.io/component: pgbackup
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "ayon.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: pgbackup
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "ayon.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: pgbackup
+    spec:
+      {{- with .Values.pgbackup.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "ayon.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.pgbackup.podSecurityContext | nindent 8 }}
+      volumes:
+        - name: pgbackup-volume
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-pgbackup
+      containers:
+        - name: pgbackup
+          securityContext:
+            {{- toYaml .Values.pgbackup.securityContext | nindent 12 }}
+          image: "{{ .Values.pgbackup.image.repository }}:{{ .Values.pgbackup.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.pgbackup.image.pullPolicy }}
+          envFrom:
+            - secretRef:
+                name: {{ .Values.pgbackup.existingEnv }}
+          livenessProbe:
+            httpGet:
+              port: 8080
+          resources:
+            {{- toYaml .Values.pgbackup.resources | nindent 12 }}
+          volumeMounts:
+            - name: pgbackup-volume
+              mountPath: /backups
+      {{- with .Values.pgbackup.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.pgbackup.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.pgbackup.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

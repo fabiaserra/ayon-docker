@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "ayon.fullname" . }}
+  labels:
+    {{- include "ayon.labels" . | nindent 4 }}
+    app.kubernetes.io/component: server
+spec:
+  {{- if not .Values.ayon.autoscaling.enabled }}
+  replicas: {{ .Values.ayon.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "ayon.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: server
+  template:
+    metadata:
+      {{- with .Values.ayon.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "ayon.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: server
+    spec:
+      {{- with .Values.ayon.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "ayon.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.ayon.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          envFrom:
+            - secretRef:
+                name: {{ .Values.ayon.existingEnv }}
+          securityContext:
+            {{- toYaml .Values.ayon.securityContext | nindent 12 }}
+          image: "{{ .Values.ayon.image.repository }}:{{ .Values.ayon.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.ayon.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.ayon.service.port }}
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /api/info
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /api/info
+              port: http
+          resources:
+            {{- toYaml .Values.ayon.resources | nindent 12 }}
+      {{- with .Values.ayon.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.ayon.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.ayon.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

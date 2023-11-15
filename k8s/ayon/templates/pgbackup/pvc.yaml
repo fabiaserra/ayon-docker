@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "ayon.fullname" . }}-pgbackup
+  labels:
+    {{- include "ayon.labels" . | nindent 4 }}
+    {{- with .Values.pgbackup.pvcLabels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: {{ .Values.pgbackup.volumeSize }}
+  storageClassName: {{ .Values.pgbackup.storageClass }}
