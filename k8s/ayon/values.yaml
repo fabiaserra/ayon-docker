@@ -109,6 +109,7 @@ ayon:
       mount: "workstations"
       role: "shared"
       access: "ro"
+      path: "ayon"
     # subPath: ""
 
   nodeSelector: { }
