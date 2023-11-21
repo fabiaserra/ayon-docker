@@ -112,11 +112,12 @@ ayon:
 
   tolerations: [ ]
 
+
 pgbackup:
   image:
     repository: prodrigestivill/postgres-backup-local
     pullPolicy: IfNotPresent
-    tag: "14"
+    tag: "15"
   affinity: *affinity
   storageClass: shared-hdd-lga1
   volumeSize: 20Gi
