@@ -30,6 +30,15 @@ spec:
       serviceAccountName: {{ include "ayon.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.ayon.podSecurityContext | nindent 8 }}
+      {{- if .Values.ayon.persistence.enabled }}
+      initContainers:
+        - name: init-ayon-storage
+          image: busybox
+          command: [ "sh", "-c", "mkdir -p /ayon/addons /ayon/storage && chmod 755 /ayon/addons /ayon/storage" ]
+          volumeMounts:
+            - name: ayon-storage
+              mountPath: /ayon
+      {{- end }}
       containers:
         - name: {{ .Chart.Name }}
           envFrom:
@@ -39,6 +48,15 @@ spec:
             {{- toYaml .Values.ayon.securityContext | nindent 12 }}
           image: "{{ .Values.ayon.image.repository }}:{{ .Values.ayon.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.ayon.image.pullPolicy }}
+          {{- if .Values.ayon.persistence.enabled }}
+          volumeMounts:
+            - name: ayon-storage
+              mountPath: /addons
+              subPath: addons
+            - name: ayon-storage
+              mountPath: /storage
+              subPath: storage
+          {{- end }}
           ports:
             - name: http
               containerPort: {{ .Values.ayon.service.port }}
@@ -53,6 +71,12 @@ spec:
               port: http
           resources:
             {{- toYaml .Values.ayon.resources | nindent 12 }}
+      {{- if .Values.ayon.persistence.enabled }}
+      volumes:
+        - name: ayon-storage
+          persistentVolumeClaim:
+            claimName: {{ include "ayon.fullname" . }}
+      {{- end }}
       {{- with .Values.ayon.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

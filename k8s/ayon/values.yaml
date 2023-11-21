@@ -97,6 +97,17 @@ ayon:
     targetCPUUtilizationPercentage: 80
     # targetMemoryUtilizationPercentage: 80
 
+  persistence:
+    enabled: true
+    storageClass: shared-hdd-lga1
+    accessMode: ReadWriteMany
+    size: 10Gi
+    annotations: { }
+    labels:
+      backup: "true"
+      region: "lga1"
+    # subPath: ""
+
   nodeSelector: { }
 
   tolerations: [ ]
