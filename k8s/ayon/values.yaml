@@ -106,12 +106,14 @@ ayon:
     labels:
       backup: "true"
       region: "lga1"
+      mount: "workstations"
+      role: "shared"
+      access: "ro"
     # subPath: ""
 
   nodeSelector: { }
 
   tolerations: [ ]
-
 
 pgbackup:
   image:
