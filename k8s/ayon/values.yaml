@@ -41,7 +41,7 @@ ayon:
     repository: ynput/ayon
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
-    tag: "0.5.7-20231127"
+    tag: "0.6.0-20231208"
 
   imagePullSecrets: [ ]
 
