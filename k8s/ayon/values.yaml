@@ -38,10 +38,10 @@ envSecret: &envSecret "ayon-secrets"
 ayon:
   replicaCount: 1
   image:
-    repository: ynput/ayon
-    pullPolicy: IfNotPresent
-    # Overrides the image tag whose default is the chart appVersion.
-    tag: "0.6.0-20231208"
+    repository: dm.tenant-alkemyx.lga1.ingress.coreweave.cloud/coreweave/pipeline/ayon/ayon-docker/alkemyx/ayon-server
+    # Managed with CI
+    tag: foo
+    pullPolicy: Always
 
   imagePullSecrets: [ ]
 

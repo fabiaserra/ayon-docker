@@ -14,4 +14,4 @@ services:
 
     environment:
       - "AYON_API_KEY=${AYON_API_KEY-veryinsecurapikey}"
-      - "AYON_SERVER_URL=${AYON_SERVER_URL-http://server:5000}"
+      - "AYON_SERVER_URL=${AYON_SERVER_URL-http://localhost:5000}"
