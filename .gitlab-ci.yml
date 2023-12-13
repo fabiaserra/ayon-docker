@@ -21,8 +21,10 @@ get-version:
     - apk add --no-cache git
     - git clone https://github.com/ynput/ayon-backend ./backend
     - git clone https://github.com/ynput/ayon-frontend ./frontend
-    - echo "VERSION=$(sed -n 's/__version__ = \"\(.*\)\"/\1/p' backend/ayon_server/version.py)" > version_info.txt
-    - echo "TODAY=$(date +%Y%m%d)" >> version_info.txt
+    - VERSION=$(sed -n 's/__version__ = \"\(.*\)\"/\1/p' backend/ayon_server/version.py)
+    - TODAY=$(date +%Y%m%d)
+    - echo "VERSION=$(VERSION)" > version_info.txt
+    - echo "TODAY=$(TODAY)" >> version_info.txt
     - echo version=$(VERSION) > RELEASE
     - echo build_date=$(TODAY) >> RELEASE
     - echo build_time=$(shell date +%H%M) >> RELEASE
