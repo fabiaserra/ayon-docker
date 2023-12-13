@@ -90,17 +90,17 @@ update-helm-chart:
 release-patch:
   tags:
     - kube
-  extends: .git-setup
   stage: release
-  image: alpine/semver:latest
+  image: registry.gitlab.com/gitlab-org/release-cli:latest
   script:
-    - current_version=$(awk '/^appVersion:/ {print $2}' k8s/ayon/Chart.yaml)
-    - version_tag=$(semver -i patch $current_version)
-    - git tag $version_tag
-    - git push --tags
-    - echo $version_tag > ${CI_PROJECT_DIR}/.version
-  artifacts:
-    paths:
-      - .version
+    - IMAGE_TAG=${VERSION}-${TODAY}
+    - >
+      if release-cli get --tag-name "${IMAGE_TAG}"; then
+        echo "Release "${IMAGE_TAG}" already exists, updating..."
+        release-cli update --description "Release ${IMAGE_TAG} using CI pipeline $CI_PIPELINE_ID" --tag-name "${IMAGE_TAG}"
+      else
+        echo "Release "${IMAGE_TAG}" does not exist, creating..."
+        release-cli create --description "Release ${IMAGE_TAG} using CI pipeline $CI_PIPELINE_ID" --tag-name "${IMAGE_TAG}"
+      fi
   # rules:
   #   - if: '$CI_COMMIT_REF_NAME  == $CI_DEFAULT_BRANCH'
