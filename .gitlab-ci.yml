@@ -81,7 +81,7 @@ update-helm-chart:
   stage: deploy
   script:
     - IMAGE_TAG=${VERSION}-${TODAY}
-    - 'sed -i "0,/tag:/s//tag: $IMAGE_TAG/" k8s/ayon/values.yaml'
+    - 'sed -i "0,/tag:.*/s//tag: $IMAGE_TAG/" k8s/ayon/values.yaml'
     - 'sed -i "s/appVersion:.*/appVersion: $IMAGE_TAG/" k8s/ayon/Chart.yaml'
     - git add k8s/ayon/values.yaml
     - git add k8s/ayon/Chart.yaml
