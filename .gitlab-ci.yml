@@ -6,35 +6,37 @@ variables:
   # Use TLS https://docs.gitlab.com/ee/ci/docker/using_docker_build.html#tls-enabled
   DOCKER_TLS_CERTDIR: "/certs"
 
-stages:
-  - build
-
-before_script:
-  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+get-version:
+  tags:
+    - kube
+  stage: init
+  image: alpine:latest
+  script:
+    - apk add --no-cache git
+    - git clone https://github.com/ynput/ayon-backend ./backend
+    - git clone https://github.com/ynput/ayon-frontend ./frontend
+    - echo "VERSION=$(sed -n 's/__version__ = \"\(.*\)\"/\1/p' backend/ayon_server/version.py)
+    - echo "TODAY=$(date +%Y%m%d)
+  artifacts:
+    paths:
+      - frontend
+      - backend
+    reports:
+      dotenv: version_info.txt
 
 build-server:
   stage: build
+  tags:
+    - kube
   variables:
-    IMAGE_NAME: server
-    # This should come from a combination of ayon_backend + ayon_frontend version
-    # https://community.ynput.io/t/ayon-versioning-strategy/528
-    IMAGE_TAG: 0.7.0-ax.1
+    IMAGE_NAME: "ayon-server"
+  image:
+    name: gcr.io/kaniko-project/executor:v1.14.0-debug
+    entrypoint: [ "" ]
   script:
-    - |
-      export DOCKERFILE=Dockerfile
-      export WORKINGDIR=api
-      export CI_APPLICATION_REPOSITORY=${CI_APPLICATION_REPOSITORY:-$CI_REGISTRY_IMAGE/$CI_COMMIT_BRANCH/$IMAGE_NAME}
-      export COMMIT_IMAGE=$CI_APPLICATION_REPOSITORY:${CI_APPLICATION_TAG:-$CI_COMMIT_SHA}
-      export WORKING_IMAGE=$CI_APPLICATION_REPOSITORY:$IMAGE_TAG
-    - |
-      IMAGE_EXISTS=$(docker manifest inspect $WORKING_IMAGE > /dev/null ; echo $?)
-      if [[ $IMAGE_EXISTS -eq 1 ]]; then
-        cd $WORKINGDIR && docker build -f $DOCKERFILE -t $COMMIT_IMAGE -t $WORKING_IMAGE .
-      else
-        docker pull $WORKING_IMAGE
-        cd $WORKINGDIR && docker build --cache-from $WORKING_IMAGE -f $DOCKERFILE -t $COMMIT_IMAGE -t $WORKING_IMAGE .
-      fi
-      docker push $COMMIT_IMAGE
-      docker push $WORKING_IMAGE
-  rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - /kaniko/executor
+      --context .
+      --dockerfile "${CI_PROJECT_DIR}/Dockerfile"
+      --destination "${CI_REGISTRY_IMAGE}/${CI_COMMIT_BRANCH}/${IMAGE_NAME}:${VERSION}-${TODAY}"
+  dependencies:
+    - get-version
