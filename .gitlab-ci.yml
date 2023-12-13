@@ -16,17 +16,17 @@ get-version:
   tags:
     - kube
   stage: init
-  image: alpine:latest
+  image: ubuntu:jammy
   script:
     - apk add --no-cache git
     - git clone https://github.com/ynput/ayon-backend ./backend
     - git clone https://github.com/ynput/ayon-frontend ./frontend
     - VERSION=$(sed -n 's/__version__ = \"\(.*\)\"/\1/p' backend/ayon_server/version.py)
     - TODAY=$(date +%Y%m%d)
-    - echo "VERSION=$(VERSION)" > version_info.txt
-    - echo "TODAY=$(TODAY)" >> version_info.txt
-    - echo version=$(VERSION) > RELEASE
-    - echo build_date=$(TODAY) >> RELEASE
+    - echo "VERSION=${VERSION}" > version_info.txt
+    - echo "TODAY=${TODAY}" >> version_info.txt
+    - echo version=${VERSION} > RELEASE
+    - echo build_date=${TODAY} >> RELEASE
     - echo build_time=$(shell date +%H%M) >> RELEASE
     - echo frontend_branch=$(shell cd frontend && git branch --show-current) >> RELEASE
     - echo backend_branch=$(shell cd backend && git branch --show-current) >> RELEASE
@@ -51,7 +51,7 @@ build-server:
   tags:
     - kube
   variables:
-    IMAGE_NAME: "ayon-server"
+    IMAGE_NAME: "ayon-docker"
   image:
     name: gcr.io/kaniko-project/executor:v1.14.0-debug
     entrypoint: [ "" ]

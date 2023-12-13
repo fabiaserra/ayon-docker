@@ -38,7 +38,7 @@ envSecret: &envSecret "ayon-secrets"
 ayon:
   replicaCount: 1
   image:
-    repository: dm.tenant-alkemyx.lga1.ingress.coreweave.cloud/coreweave/pipeline/ayon/ayon-docker/alkemyx/ayon-server
+    repository: dm.tenant-alkemyx.lga1.ingress.coreweave.cloud/coreweave/pipeline/ayon/ayon-docker/alkemyx/ayon-docker
     # Managed with CI
     tag: 1.0.0-rc.2-20231213
     pullPolicy: Always
