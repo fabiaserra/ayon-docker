@@ -83,7 +83,9 @@ update-helm-chart:
   image: alpine:latest
   script:
     - IMAGE_TAG=${VERSION}-${TODAY}
-    - 'sed -i "0,/tag:.*/s//tag: $IMAGE_TAG/" k8s/ayon/values.yaml'
+    # The last part of this syntax is to avoid replacing multiple 'tag' entries and just do it on the first one it finds
+    # which in our values.yaml happens to be the 'ayon' artifact that we are interested in replacing
+    - 'sed -i "/tag:.*/{s//tag: $IMAGE_TAG/;:a;n;ba;}" k8s/ayon/values.yaml'
     - 'sed -i "s/appVersion:.*/appVersion: $IMAGE_TAG/" k8s/ayon/Chart.yaml'
     - git add k8s/ayon/values.yaml
     - git add k8s/ayon/Chart.yaml
