@@ -79,8 +79,8 @@ update-helm-chart:
     - IMAGE_TAG=${VERSION}-${TODAY}
     - 'sed -i "0,/tag:/s//tag: $IMAGE_TAG/" k8s/ayon/values.yaml'
     - 'sed -i "s/appVersion:.*/appVersion: $IMAGE_TAG/" k8s/ayon/Chart.yaml'
-    - git add k8s/values.yaml
-    - git add k8s/Chart.yaml
+    - git add k8s/ayon/values.yaml
+    - git add k8s/ayon/Chart.yaml
     - git commit -m "Update Helm chart with new tag [ci skip]"
     - git diff-index --quiet HEAD || git commit -am '[skip ci] values.yml update'
     - git push origin "${CI_COMMIT_BRANCH}"
