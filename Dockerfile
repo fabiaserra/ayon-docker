@@ -2,7 +2,7 @@
 # Build frontend
 #
 
-FROM node:20 AS build
+FROM node:20.2.0-bullseye-slim AS build
 
 RUN mkdir /frontend
 WORKDIR /frontend
