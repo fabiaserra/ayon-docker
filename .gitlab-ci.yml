@@ -18,8 +18,6 @@ get-version:
   stage: init
   image: ubuntu:jammy
   script:
-    - apt-get update
-    - apt-get install -y --no-install-recommends git
     - git clone https://github.com/ynput/ayon-backend ./backend
     - git clone https://github.com/ynput/ayon-frontend ./frontend
     - VERSION=$(sed -n 's/__version__ = \"\(.*\)\"/\1/p' backend/ayon_server/version.py)
