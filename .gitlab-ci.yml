@@ -56,3 +56,50 @@ build-server:
     - get-version
   # rules:
   #   - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+update-helm-chart:
+  tags:
+    - kube
+  extends: .git-setup
+  image: alpine:latest
+  stage: build
+  script:
+    - IMAGE_TAG=${VERSION}-${TODAY}
+    - 'sed -i "0,/tag:/s//tag: $IMAGE_TAG/" k8s/values.yaml'
+    - 'sed -i "s/appVersion:.*/appVersion: $IMAGE_TAG/" k8s/Chart.yaml'
+    - git add k8s/values.yaml
+    - git add k8s/Chart.yaml
+    - git commit -m "Update Helm chart with new tag [ci skip]"
+    - git diff-index --quiet HEAD || git commit -am '[skip ci] values.yml update'
+    - git push origin "${CI_COMMIT_BRANCH}"
+  # rules:
+  #   - if: '$CI_COMMIT_REF_NAME  == $CI_DEFAULT_BRANCH'
+  when: on_success
+
+.git-setup: &git-setup
+before_script:
+  - apk add --no-cache git
+  - URL_WITH_AUTH="https://gitlab-ci-token:${CI_TOKEN}@$(echo $CI_PROJECT_URL | sed 's|https://||')"
+  - git clone "${URL_WITH_AUTH}.git" "${CI_COMMIT_SHA}"
+  - git config --global user.email "${GITLAB_USER_EMAIL}"
+  - git config --global user.name "${GITLAB_USER_LOGIN}"
+  - cd "${CI_COMMIT_SHA}"
+  - git checkout -B ${CI_COMMIT_BRANCH} remotes/origin/${CI_COMMIT_BRANCH} --
+
+release-patch:
+  tags:
+    - kube
+  extends: .git-setup
+  stage: release
+  image: alpine/semver:latest
+  script:
+    - current_version=$(awk '/^appVersion:/ {print $2}' k8s/Chart.yaml)
+    - version_tag=$(semver -i patch $current_version)
+    - git tag $version_tag
+    - git push --tags
+    - echo $version_tag > ${CI_PROJECT_DIR}/.version
+  artifacts:
+    paths:
+      - .version
+  # rules:
+  #   - if: '$CI_COMMIT_REF_NAME  == $CI_DEFAULT_BRANCH'
