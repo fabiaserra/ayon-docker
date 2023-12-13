@@ -37,8 +37,8 @@ get-version:
       - RELEASE
     reports:
       dotenv: version_info.txt
-  # rules:
-  #   - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
 
 build-server:
   stage: build
@@ -56,8 +56,8 @@ build-server:
       --destination "${CI_REGISTRY_IMAGE}/alkemyx/${IMAGE_NAME}:${VERSION}-${TODAY}"
   dependencies:
     - get-version
-  # rules:
-  #   - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
 
 .git-setup: &git-setup
   before_script:
@@ -84,8 +84,8 @@ update-helm-chart:
     - git commit -m "Update Helm chart with new tag [ci skip]"
     - git diff-index --quiet HEAD || git commit -am '[skip ci] values.yml update'
     - git push origin "${CI_COMMIT_BRANCH}"
-  # rules:
-  #   - if: '$CI_COMMIT_REF_NAME  == $CI_DEFAULT_BRANCH'
+  rules:
+    - if: '$CI_COMMIT_REF_NAME  == $CI_DEFAULT_BRANCH'
   when: on_success
 
 release-patch:
@@ -103,5 +103,5 @@ release-patch:
         echo "Release "${IMAGE_TAG}" does not exist, creating..."
         release-cli create --description "Release ${IMAGE_TAG} using CI pipeline $CI_PIPELINE_ID" --tag-name "${IMAGE_TAG}"
       fi
-  # rules:
-  #   - if: '$CI_COMMIT_REF_NAME  == $CI_DEFAULT_BRANCH'
+  rules:
+    - if: '$CI_COMMIT_REF_NAME  == $CI_DEFAULT_BRANCH'
