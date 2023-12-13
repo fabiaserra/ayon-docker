@@ -10,6 +10,9 @@ variables:
   # Use TLS https://docs.gitlab.com/ee/ci/docker/using_docker_build.html#tls-enabled
   DOCKER_TLS_CERTDIR: "/certs"
 
+before_script:
+  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+
 get-version:
   tags:
     - kube
@@ -27,6 +30,8 @@ get-version:
       - backend
     reports:
       dotenv: version_info.txt
+  # rules:
+  #   - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
 
 build-server:
   stage: build
@@ -41,6 +46,8 @@ build-server:
     - /kaniko/executor
       --context .
       --dockerfile "${CI_PROJECT_DIR}/Dockerfile"
-      --destination "${CI_REGISTRY_IMAGE}/${CI_COMMIT_BRANCH}/${IMAGE_NAME}:${VERSION}-${TODAY}"
+      --destination "${CI_REGISTRY_IMAGE}/release/alkemyx/${IMAGE_NAME}:${VERSION}-${TODAY}"
   dependencies:
     - get-version
+  # rules:
+  #   - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
