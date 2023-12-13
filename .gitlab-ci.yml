@@ -76,8 +76,8 @@ update-helm-chart:
   stage: build
   script:
     - IMAGE_TAG=${VERSION}-${TODAY}
-    - 'sed -i "0,/tag:/s//tag: $IMAGE_TAG/" k8s/values.yaml'
-    - 'sed -i "s/appVersion:.*/appVersion: $IMAGE_TAG/" k8s/Chart.yaml'
+    - 'sed -i "0,/tag:/s//tag: $IMAGE_TAG/" k8s/ayon/values.yaml'
+    - 'sed -i "s/appVersion:.*/appVersion: $IMAGE_TAG/" k8s/ayon/Chart.yaml'
     - git add k8s/values.yaml
     - git add k8s/Chart.yaml
     - git commit -m "Update Helm chart with new tag [ci skip]"
@@ -94,7 +94,7 @@ release-patch:
   stage: release
   image: alpine/semver:latest
   script:
-    - current_version=$(awk '/^appVersion:/ {print $2}' k8s/Chart.yaml)
+    - current_version=$(awk '/^appVersion:/ {print $2}' k8s/ayon/Chart.yaml)
     - version_tag=$(semver -i patch $current_version)
     - git tag $version_tag
     - git push --tags
