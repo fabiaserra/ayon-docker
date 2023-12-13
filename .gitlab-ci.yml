@@ -43,7 +43,7 @@ build-server:
     - /kaniko/executor
       --context .
       --dockerfile "${CI_PROJECT_DIR}/Dockerfile"
-      --destination "${CI_REGISTRY_IMAGE}/release/alkemyx/${IMAGE_NAME}:${VERSION}-${TODAY}"
+      --destination "${CI_REGISTRY_IMAGE}/alkemyx/${IMAGE_NAME}:${VERSION}-${TODAY}"
   dependencies:
     - get-version
   # rules:
