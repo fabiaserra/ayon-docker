@@ -28,11 +28,11 @@ get-version:
     - echo "TODAY=${TODAY}" >> version_info.txt
     - echo version=${VERSION} > RELEASE
     - echo build_date=${TODAY} >> RELEASE
-    - echo build_time=$(shell date +%H%M) >> RELEASE
-    - echo frontend_branch=$(shell cd frontend && git branch --show-current) >> RELEASE
-    - echo backend_branch=$(shell cd backend && git branch --show-current) >> RELEASE
-    - echo frontend_commit=$(shell cd frontend && git rev-parse --short HEAD) >> RELEASE
-    - echo backend_commit=$(shell cd backend && git rev-parse --short HEAD) >> RELEASE
+    - echo build_time=$(date +%H%M) >> RELEASE
+    - echo frontend_branch=$(cd frontend && git branch --show-current) >> RELEASE
+    - echo backend_branch=$(cd backend && git branch --show-current) >> RELEASE
+    - echo frontend_commit=$(cd frontend && git rev-parse --short HEAD) >> RELEASE
+    - echo backend_commit=$(cd backend && git rev-parse --short HEAD) >> RELEASE
   artifacts:
     paths:
       - frontend
