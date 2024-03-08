@@ -42,6 +42,10 @@ ayon:
     # Managed with CI
     tag: 1.0.3-20240207
     pullPolicy: Always
+  email:
+    from: "ayon@alkemy-x.com"
+    smtpHost: "postfix-relay-service.tenant-alkemyx.svc.tenant.chi.local"
+    smtpPort: "25"
 
   imagePullSecrets: [ ]
 
