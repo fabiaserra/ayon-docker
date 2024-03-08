@@ -44,6 +44,13 @@ spec:
           envFrom:
             - secretRef:
                 name: {{ .Values.ayon.existingEnv }}
+          env:
+            - name: AYON_EMAIL_FROM
+              value: "{{ .Values.ayon.email.from }}"
+            - name: AYON_EMAIL_SMTP_HOST
+              value: "{{ .Values.ayon.email.smtpHost }}"
+            - name: AYON_EMAIL_SMTP_PORT
+              value: "{{ .Values.ayon.email.smtpPort }}"
           securityContext:
             {{- toYaml .Values.ayon.securityContext | nindent 12 }}
           image: "{{ .Values.ayon.image.repository }}:{{ .Values.ayon.image.tag | default .Chart.AppVersion }}"
