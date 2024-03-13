@@ -44,7 +44,7 @@ ayon:
     pullPolicy: Always
   email:
     from: "ayon@alkemy-x.com"
-    smtpHost: "postfix-relay-service.tenant-alkemyx.svc.tenant.chi.local"
+    smtpHost: "smtp.alkemy-x.com"
     smtpPort: "25"
 
   imagePullSecrets: [ ]
