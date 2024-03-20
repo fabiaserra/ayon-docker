@@ -12,6 +12,7 @@ COPY ./frontend/vite.config.js /frontend/vite.config.js
 COPY ./frontend/public /frontend/public
 COPY ./frontend/package.json /frontend/package.json
 
+RUN npm install husky
 RUN yarn install
 COPY ./frontend/src /frontend/src
 RUN yarn build

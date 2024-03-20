@@ -40,7 +40,7 @@ ayon:
   image:
     repository: dm.tenant-alkemyx.lga1.ingress.coreweave.cloud/coreweave/pipeline/ayon/ayon-docker/alkemyx/ayon-docker
     # Managed with CI
-    tag: 1.0.7-20240313
+    tag: 1.0.8-20240320
     pullPolicy: Always
   email:
     from: "ayon@alkemy-x.com"
