@@ -49,7 +49,9 @@ ayon:
 
   imagePullSecrets: [ ]
 
-  podAnnotations: { }
+  podAnnotations:
+    vpc.coreweave.cloud/name: "lga1-1"
+    vpc.coreweave.cloud/client-id: "ayon-http"
 
   podSecurityContext: { }
   # fsGroup: 2000
