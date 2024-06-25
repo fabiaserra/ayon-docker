@@ -33,3 +33,23 @@ To deploy these demo projects to your server, run:
 
 *NOTE: These demo projects can take a while to create.*
 
+## Postgres Setup
+
+After initial deployment of the server, there may be additional manual steps required to ensure postgres extensions are
+working properly. Specifically, if you see this error:
+
+```log
+ERROR:  operator class "public.gin_trgm_ops" does not exist for access method "gin"
+```
+
+You will need to connect to the database as the `postgres` user and run the following commands:
+
+```shell
+# Connect
+psql -h <ayon-postgres-instance> -U postgres ayon
+```
+
+```SQL
+CREATE EXTENSION IF NOT EXISTS "pg_trgm";
+ALTER EXTENSION pg_trgm SET SCHEMA public;
+```
