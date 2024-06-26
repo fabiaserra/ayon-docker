@@ -15,7 +15,6 @@ COPY ./frontend/vite.config.* /frontend/
 COPY ./frontend/tsconfig.jso[n] /frontend/
 COPY ./frontend/tsconfig.node.jso[n] /frontend/
 
-RUN npm install husky
 RUN yarn install
 COPY ./frontend/src /frontend/src
 RUN yarn build
