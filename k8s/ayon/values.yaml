@@ -176,6 +176,10 @@ postgresql:
     affinity: *affinity
     persistence:
       storageClass: shared-hdd-lga1
+    resources:
+      requests:
+        memory: 512Mi
+        cpu: 500m
   readReplicas:
     affinity: *affinity
   auth:
